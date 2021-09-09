@@ -47,6 +47,15 @@ export class TodoController {
     return this.todoRepository.create(todo);
   }
 
+  @get('/todos/count')
+  @response(200, {
+    description: 'Todo model count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async count(@param.where(Todo) where?: Where<Todo>): Promise<Count> {
+    return this.todoRepository.count(where);
+  }
+
   @get('/todos')
   @response(200, {
     description: 'Array of Todo model instances',
@@ -60,7 +69,7 @@ export class TodoController {
     },
   })
   async find(@param.filter(Todo) filter?: Filter<Todo>): Promise<Todo[]> {
-    return this.todoRepository.find(filter);
+    return this.todoRepository.find({include: ['user', 'todoList']});
   }
 
   @patch('/todos')
