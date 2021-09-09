@@ -47,15 +47,6 @@ export class TodoListController {
     return this.todoListRepository.create(todoList);
   }
 
-  @get('/todo-lists/count')
-  @response(200, {
-    description: 'TodoList model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(@param.where(TodoList) where?: Where<TodoList>): Promise<Count> {
-    return this.todoListRepository.count(where);
-  }
-
   @get('/todo-lists')
   @response(200, {
     description: 'Array of TodoList model instances',
