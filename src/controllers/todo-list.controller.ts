@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -23,7 +23,7 @@ import {TodolistRepository} from '../repositories';
 export class TodoListController {
   constructor(
     @repository(TodolistRepository)
-    public todolistRepository : TodolistRepository,
+    public todolistRepository: TodolistRepository,
   ) {}
 
   @post('/todolists')
@@ -45,17 +45,6 @@ export class TodoListController {
     todolist: Omit<Todolist, 'id'>,
   ): Promise<Todolist> {
     return this.todolistRepository.create(todolist);
-  }
-
-  @get('/todolists/count')
-  @response(200, {
-    description: 'Todolist model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Todolist) where?: Where<Todolist>,
-  ): Promise<Count> {
-    return this.todolistRepository.count(where);
   }
 
   @get('/todolists')
@@ -106,7 +95,8 @@ export class TodoListController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Todolist, {exclude: 'where'}) filter?: FilterExcludingWhere<Todolist>
+    @param.filter(Todolist, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Todolist>,
   ): Promise<Todolist> {
     return this.todolistRepository.findById(id, filter);
   }
