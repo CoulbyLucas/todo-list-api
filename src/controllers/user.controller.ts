@@ -103,7 +103,7 @@ export class UserController {
     @param.path.number('id') id: number,
     @param.filter(User, {exclude: 'where'}) filter?: FilterExcludingWhere<User>,
   ): Promise<User> {
-    return this.userRepository.findById(id, filter);
+    return this.userRepository.findById(id, {include: ['todos', 'todoLists']});
   }
 
   @patch('/users/{id}')
