@@ -1,53 +1,68 @@
-import {Entity, model, property} from '@loopback/repository';
+/* eslint-disable @typescript-eslint/naming-convention */
+import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {TodoListWithRelations, UserWithRelations} from '.';
+import {TodoList} from './todo-list.model';
+import {User} from './user.model';
 
-@model({settings: {idInjection: false, postgresql: {schema: 'public', table: 'todo'}}})
+@model({
+  settings: {
+    idInjection: false,
+    postgresql: {schema: 'public', table: 'todo'},
+    foreignKeys: {
+      fk_todo_userId: {
+        name: 'fk_todo_userId',
+        entity: 'User',
+        entityKey: 'id',
+        foreignKey: 'userid',
+        onDelete: 'CASCADE',
+        onUpdate: 'SET NULL',
+      },
+      fk_todo_todoListId: {
+        name: 'fk_todo_todoListId',
+        entity: 'TodoList',
+        entityKey: 'id',
+        foreignKey: 'todolistid',
+        onDelete: 'CASCADE',
+        onUpdate: 'SET NULL',
+      },
+    },
+  },
+})
 export class Todo extends Entity {
   @property({
     type: 'number',
-    required: true,
-    scale: 0,
-    id: 1,
-    postgresql: {columnName: 'id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
+    id: true,
+    generated: true,
   })
-  id: number;
+  id?: number;
 
   @property({
     type: 'string',
     required: true,
-    postgresql: {columnName: 'title', dataType: 'text', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
   })
   title: string;
 
   @property({
     type: 'string',
-    postgresql: {columnName: 'desc', dataType: 'text', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'YES'},
   })
   desc?: string;
 
   @property({
     type: 'boolean',
-    postgresql: {columnName: 'iscomplete', dataType: 'boolean', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'YES'},
+    default: false,
   })
-  iscomplete?: boolean;
+  isComplete?: boolean;
 
   @property({
     type: 'date',
-    postgresql: {columnName: 'createdat', dataType: 'timestamp with time zone', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'YES'},
   })
-  createdat?: string;
+  createdAt?: string;
 
-  @property({
-    type: 'number',
-    scale: 0,
-    postgresql: {columnName: 'userid', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'YES'},
-  })
-  userid?: number;
+  @belongsTo(() => User)
+  userId: number;
 
-  // Define well-known properties here
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  @belongsTo(() => TodoList)
+  todoListId: number;
 
   constructor(data?: Partial<Todo>) {
     super(data);
@@ -56,6 +71,8 @@ export class Todo extends Entity {
 
 export interface TodoRelations {
   // describe navigational properties here
+  user?: UserWithRelations;
+  todoList?: TodoListWithRelations;
 }
 
 export type TodoWithRelations = Todo & TodoRelations;

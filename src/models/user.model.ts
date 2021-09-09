@@ -1,41 +1,45 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {TodoListWithRelations, TodoWithRelations} from '.';
+import {TodoList} from './todo-list.model';
+import {Todo} from './todo.model';
 
-@model({settings: {idInjection: false, postgresql: {schema: 'public', table: 'user'}}})
+@model({
+  settings: {
+    idInjection: false,
+    postgresql: {schema: 'public', table: 'user'},
+  },
+})
 export class User extends Entity {
   @property({
     type: 'number',
-    required: true,
-    scale: 0,
-    id: 1,
-    postgresql: {columnName: 'id', dataType: 'integer', dataLength: null, dataPrecision: null, dataScale: 0, nullable: 'NO'},
+    id: true,
+    generated: true,
   })
-  id: number;
+  id?: number;
 
   @property({
     type: 'string',
     required: true,
-    postgresql: {columnName: 'username', dataType: 'text', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
   })
   username: string;
 
   @property({
     type: 'string',
     required: true,
-    postgresql: {columnName: 'password', dataType: 'text', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'NO'},
   })
   password: string;
 
   @property({
     type: 'date',
-    postgresql: {columnName: 'createdat', dataType: 'timestamp with time zone', dataLength: null, dataPrecision: null, dataScale: null, nullable: 'YES'},
+    required: true,
   })
-  createdat?: string;
+  createdAt: string;
 
-  // Define well-known properties here
+  @hasMany(() => Todo, {keyTo: 'userId'})
+  todos: Todo[];
 
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  @hasMany(() => TodoList, {keyTo: 'userId'})
+  todoLists: TodoList[];
 
   constructor(data?: Partial<User>) {
     super(data);
@@ -44,6 +48,8 @@ export class User extends Entity {
 
 export interface UserRelations {
   // describe navigational properties here
+  todos?: TodoWithRelations;
+  todoLists?: TodoListWithRelations;
 }
 
 export type UserWithRelations = User & UserRelations;

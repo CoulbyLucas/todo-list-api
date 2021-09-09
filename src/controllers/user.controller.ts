@@ -1,7 +1,6 @@
 import {
   Count,
   CountSchema,
-  Filter,
   FilterExcludingWhere,
   repository,
   Where,
@@ -47,6 +46,15 @@ export class UserController {
     return this.userRepository.create(user);
   }
 
+  @get('/users/count')
+  @response(200, {
+    description: 'User model count',
+    content: {'application/json': {schema: CountSchema}},
+  })
+  async count(@param.where(User) where?: Where<User>): Promise<Count> {
+    return this.userRepository.count(where);
+  }
+
   @get('/users')
   @response(200, {
     description: 'Array of User model instances',
@@ -59,8 +67,8 @@ export class UserController {
       },
     },
   })
-  async find(@param.filter(User) filter?: Filter<User>): Promise<User[]> {
-    return this.userRepository.find(filter);
+  async find(): Promise<User[]> {
+    return this.userRepository.find({include: ['todoLists', 'todos']});
   }
 
   @patch('/users')
