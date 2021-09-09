@@ -8,9 +8,7 @@ export class TodoRepository extends DefaultCrudRepository<
   typeof Todo.prototype.id,
   TodoRelations
 > {
-  constructor(
-    @inject('datasources.todo') dataSource: TodoDataSource,
-  ) {
+  constructor(@inject('datasources.todo') dataSource: TodoDataSource) {
     super(Todo, dataSource);
   }
 }
