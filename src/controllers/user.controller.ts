@@ -137,12 +137,11 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(NewUserRequest, {
             title: 'NewUser',
-            exclude: ['id', 'verificationToken', 'emailVerified'],
           }),
         },
       },
     })
-    newUserRequest: Omit<NewUserRequest, 'id'>,
+    newUserRequest: NewUserRequest,
   ): Promise<User> {
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
