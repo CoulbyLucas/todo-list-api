@@ -1,17 +1,10 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where,
-} from '@loopback/repository';
+import {authenticate} from '@loopback/authentication';
+import {repository} from '@loopback/repository';
 import {
   del,
   get,
   getModelSchemaRef,
   param,
-  patch,
   post,
   put,
   requestBody,
@@ -19,7 +12,7 @@ import {
 } from '@loopback/rest';
 import {TodoList} from '../models';
 import {TodoListRepository} from '../repositories';
-
+@authenticate('jwt')
 export class TodoListController {
   constructor(
     @repository(TodoListRepository)
@@ -54,34 +47,13 @@ export class TodoListController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(TodoList, {includeRelations: true}),
+          items: getModelSchemaRef(TodoList, {includeRelations: false}),
         },
       },
     },
   })
-  async find(
-    @param.filter(TodoList) filter?: Filter<TodoList>,
-  ): Promise<TodoList[]> {
+  async find(): Promise<TodoList[]> {
     return this.todoListRepository.find({include: ['todos', 'user']});
-  }
-
-  @patch('/todo-lists')
-  @response(200, {
-    description: 'TodoList PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(TodoList, {partial: true}),
-        },
-      },
-    })
-    todoList: TodoList,
-    @param.where(TodoList) where?: Where<TodoList>,
-  ): Promise<Count> {
-    return this.todoListRepository.updateAll(todoList, where);
   }
 
   @get('/todo-lists/{id}')
@@ -89,21 +61,17 @@ export class TodoListController {
     description: 'TodoList model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(TodoList, {includeRelations: true}),
+        schema: getModelSchemaRef(TodoList, {includeRelations: false}),
       },
     },
   })
-  async findById(
-    @param.path.number('id') id: number,
-    @param.filter(TodoList, {exclude: 'where'})
-    filter?: FilterExcludingWhere<TodoList>,
-  ): Promise<TodoList> {
-    return this.todoListRepository.findById(id, filter);
+  async findById(@param.path.number('id') id: number): Promise<TodoList> {
+    return this.todoListRepository.findById(id, {include: ['todos', 'user']});
   }
 
-  @patch('/todo-lists/{id}')
+  @put('/todo-lists/{id}')
   @response(204, {
-    description: 'TodoList PATCH success',
+    description: 'TodoList PUT success',
   })
   async updateById(
     @param.path.number('id') id: number,
@@ -117,17 +85,6 @@ export class TodoListController {
     todoList: TodoList,
   ): Promise<void> {
     await this.todoListRepository.updateById(id, todoList);
-  }
-
-  @put('/todo-lists/{id}')
-  @response(204, {
-    description: 'TodoList PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() todoList: TodoList,
-  ): Promise<void> {
-    await this.todoListRepository.replaceById(id, todoList);
   }
 
   @del('/todo-lists/{id}')

@@ -14,16 +14,6 @@ import {Todo} from './todo.model';
   settings: {
     idInjection: false,
     postgresql: {schema: 'public', table: 'todoList'},
-    // foreignKeys: {
-    //   fk_todo_list_userId: {
-    //     name: 'fk_todo_list_userId',
-    //     entity: 'User',
-    //     entityKey: 'id',
-    //     foreignKey: 'userid',
-    //     onDelete: 'CASCADE',
-    //     onUpdate: 'SET NULL',
-    //   },
-    // },
   },
 })
 export class TodoList extends Entity {
@@ -49,10 +39,10 @@ export class TodoList extends Entity {
   @property({
     type: 'date',
   })
-  createdAt?: string;
+  createdAt?: string = new Date().toLocaleDateString();
 
   @belongsTo(() => User)
-  userId: number;
+  userId: string;
 
   @hasMany(() => Todo, {keyTo: 'todoId'})
   todos: Todo[];

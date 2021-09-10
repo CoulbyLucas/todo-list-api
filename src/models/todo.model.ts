@@ -8,24 +8,6 @@ import {TodoList} from './todo-list.model';
   settings: {
     idInjection: false,
     postgresql: {schema: 'public', table: 'todo'},
-    // foreignKeys: {
-    //   fk_todo_userId: {
-    //     name: 'fk_todo_userId',
-    //     entity: 'User',
-    //     entityKey: 'id',
-    //     foreignKey: 'userid',
-    //     onDelete: 'CASCADE',
-    //     onUpdate: 'SET NULL',
-    //   },
-    //   fk_todo_todoListId: {
-    //     name: 'fk_todo_todoListId',
-    //     entity: 'TodoList',
-    //     entityKey: 'id',
-    //     foreignKey: 'todolistid',
-    //     onDelete: 'CASCADE',
-    //     onUpdate: 'SET NULL',
-    //   },
-    // },
   },
 })
 export class Todo extends Entity {
@@ -56,10 +38,10 @@ export class Todo extends Entity {
   @property({
     type: 'date',
   })
-  createdAt?: string;
+  createdAt?: string = new Date().toLocaleDateString();
 
   @belongsTo(() => User)
-  userId: number;
+  userId: string;
 
   @belongsTo(() => TodoList)
   todoListId: number;
