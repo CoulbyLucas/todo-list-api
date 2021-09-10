@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import {User} from '@loopback/authentication-jwt';
 import {
   belongsTo,
   Entity,
@@ -6,24 +7,23 @@ import {
   model,
   property,
 } from '@loopback/repository';
-import {TodoWithRelations, UserWithRelations} from '.';
+import {TodoWithRelations} from '.';
 import {Todo} from './todo.model';
-import {User} from './user.model';
 
 @model({
   settings: {
     idInjection: false,
     postgresql: {schema: 'public', table: 'todoList'},
-    foreignKeys: {
-      fk_todo_list_userId: {
-        name: 'fk_todo_list_userId',
-        entity: 'User',
-        entityKey: 'id',
-        foreignKey: 'userid',
-        onDelete: 'CASCADE',
-        onUpdate: 'SET NULL',
-      },
-    },
+    // foreignKeys: {
+    //   fk_todo_list_userId: {
+    //     name: 'fk_todo_list_userId',
+    //     entity: 'User',
+    //     entityKey: 'id',
+    //     foreignKey: 'userid',
+    //     onDelete: 'CASCADE',
+    //     onUpdate: 'SET NULL',
+    //   },
+    // },
   },
 })
 export class TodoList extends Entity {
@@ -64,7 +64,6 @@ export class TodoList extends Entity {
 
 export interface TodoListRelations {
   // describe navigational properties here
-  user?: UserWithRelations;
   todos?: TodoWithRelations;
 }
 

@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import {User} from '@loopback/authentication-jwt';
 import {belongsTo, Entity, model, property} from '@loopback/repository';
-import {TodoListWithRelations, UserWithRelations} from '.';
+import {TodoListWithRelations} from '.';
 import {TodoList} from './todo-list.model';
-import {User} from './user.model';
 
 @model({
   settings: {
     idInjection: false,
     postgresql: {schema: 'public', table: 'todo'},
-    foreignKeys: {
-      fk_todo_userId: {
-        name: 'fk_todo_userId',
-        entity: 'User',
-        entityKey: 'id',
-        foreignKey: 'userid',
-        onDelete: 'CASCADE',
-        onUpdate: 'SET NULL',
-      },
-      fk_todo_todoListId: {
-        name: 'fk_todo_todoListId',
-        entity: 'TodoList',
-        entityKey: 'id',
-        foreignKey: 'todolistid',
-        onDelete: 'CASCADE',
-        onUpdate: 'SET NULL',
-      },
-    },
+    // foreignKeys: {
+    //   fk_todo_userId: {
+    //     name: 'fk_todo_userId',
+    //     entity: 'User',
+    //     entityKey: 'id',
+    //     foreignKey: 'userid',
+    //     onDelete: 'CASCADE',
+    //     onUpdate: 'SET NULL',
+    //   },
+    //   fk_todo_todoListId: {
+    //     name: 'fk_todo_todoListId',
+    //     entity: 'TodoList',
+    //     entityKey: 'id',
+    //     foreignKey: 'todolistid',
+    //     onDelete: 'CASCADE',
+    //     onUpdate: 'SET NULL',
+    //   },
+    // },
   },
 })
 export class Todo extends Entity {
@@ -71,7 +71,6 @@ export class Todo extends Entity {
 
 export interface TodoRelations {
   // describe navigational properties here
-  user?: UserWithRelations;
   todoList?: TodoListWithRelations;
 }
 

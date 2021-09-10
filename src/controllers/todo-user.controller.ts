@@ -1,22 +1,14 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  Todo,
-  User,
-} from '../models';
+import {User} from '@loopback/authentication-jwt';
+import {repository} from '@loopback/repository';
+import {get, getModelSchemaRef, param} from '@loopback/rest';
+import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
 
 export class TodoUserController {
   constructor(
     @repository(TodoRepository)
     public todoRepository: TodoRepository,
-  ) { }
+  ) {}
 
   @get('/todos/{id}/user', {
     responses: {

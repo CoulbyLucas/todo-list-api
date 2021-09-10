@@ -1,45 +1,62 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
-import {TodoListWithRelations, TodoWithRelations} from '.';
-import {TodoList} from './todo-list.model';
-import {Todo} from './todo.model';
+import {Entity, hasOne, model, property} from '@loopback/repository';
+import {UserCredentials} from './user-credentials.model';
 
 @model({
   settings: {
-    idInjection: false,
-    postgresql: {schema: 'public', table: 'user'},
+    strict: true,
   },
 })
 export class User extends Entity {
+  // must keep it
+  // add id:string<UUID>
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
-    generated: true,
+    generated: false,
+    defaultFn: 'uuidv4',
   })
-  id?: number;
+  id: string;
 
   @property({
     type: 'string',
-    required: true,
   })
-  username: string;
+  realm?: string;
 
+  // must keep it
+  @property({
+    type: 'string',
+  })
+  username?: string;
+
+  // must keep it
+  // feat email unique
   @property({
     type: 'string',
     required: true,
+    index: {
+      unique: true,
+    },
   })
-  password: string;
+  email: string;
 
   @property({
-    type: 'date',
-    required: true,
+    type: 'boolean',
   })
-  createdAt: string;
+  emailVerified?: boolean;
 
-  @hasMany(() => Todo, {keyTo: 'userId'})
-  todos: Todo[];
+  @property({
+    type: 'string',
+  })
+  verificationToken?: string;
 
-  @hasMany(() => TodoList, {keyTo: 'userId'})
-  todoLists: TodoList[];
+  @hasOne(() => UserCredentials)
+  userCredentials: UserCredentials;
+
+  // Define well-known properties here
+
+  // Indexer property to allow additional data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [prop: string]: any;
 
   constructor(data?: Partial<User>) {
     super(data);
@@ -48,8 +65,6 @@ export class User extends Entity {
 
 export interface UserRelations {
   // describe navigational properties here
-  todos?: TodoWithRelations;
-  todoLists?: TodoListWithRelations;
 }
 
 export type UserWithRelations = User & UserRelations;
